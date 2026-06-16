@@ -1,6 +1,8 @@
 package com.SP.week2.SpringBootWeb.controllers;
 
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
+import com.SP.week2.SpringBootWeb.entities.EmployeeEntity;
+import com.SP.week2.SpringBootWeb.repositories.EmployeeRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,12 @@ import java.util.List;
 @RequestMapping("/employees") // mutual mapping
 public class EmployeeController {
 
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
     // 2. Demo controller
     @GetMapping(path = "/getSecretMessage" )
     public String getMySuperSecretMessage(){
@@ -22,9 +30,9 @@ public class EmployeeController {
 
     //3. With @PathVariable
     @GetMapping("/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long employeeId){
-        return new EmployeeDTO(employeeId,"A","ak@gmail",12, LocalDate.of(2026,6,16),true);
-
+    public EmployeeEntity getEmployeeById(@PathVariable Long employeeId){
+       // return new EmployeeDTO(employeeId,"A","ak@gmail",12, LocalDate.of(2026,6,16),true);
+        return employeeRepository.findById(employeeId).orElse(null);
     }
 
     /* 4.
@@ -38,19 +46,24 @@ public class EmployeeController {
     */
 
     //5. @RequestParam
-    @GetMapping
-    public String getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
-        return "Hi age "+age;
-    }
+//    @GetMapping
+//    public String getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
+//        return " Hi age "+age;
+//    }
     // (required = false) has to be mention otherwise work as @PathVariable
     // this method will still run if no age passed along url as its optional @RequestParam
+
+    @GetMapping
+    public List<EmployeeEntity> getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
+        return employeeRepository.findAll();
+    }
 
     //6. @PostMapping
     // if the url of a get and post request exactly same and when we run it on browser it
     // automatically runs get url and gives its response
     @PostMapping
-    public String createNewEmployee(){
-        return "Hello from POST";
+    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity employee){
+        return employeeRepository.save(employee);
     }
 
 
