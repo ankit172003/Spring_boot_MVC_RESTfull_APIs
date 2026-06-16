@@ -1,12 +1,8 @@
 package com.SP.week2.SpringBootWeb.controllers;
 
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
-import com.SP.week2.SpringBootWeb.entities.EmployeeEntity;
-import com.SP.week2.SpringBootWeb.repositories.EmployeeRepository;
-import jakarta.annotation.PostConstruct;
+import com.SP.week2.SpringBootWeb.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 import java.util.List;
 
 // All learnings :-
@@ -16,23 +12,23 @@ import java.util.List;
 @RequestMapping("/employees") // mutual mapping
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
+
     // 2. Demo controller
-    @GetMapping(path = "/getSecretMessage" )
+    @GetMapping("/getSecretMessage" )
     public String getMySuperSecretMessage(){
         return "Secret message: asdfghijkmnop";
     }
 
     //3. With @PathVariable
     @GetMapping("/{employeeId}")
-    public EmployeeEntity getEmployeeById(@PathVariable Long employeeId){
-       // return new EmployeeDTO(employeeId,"A","ak@gmail",12, LocalDate.of(2026,6,16),true);
-        return employeeRepository.findById(employeeId).orElse(null);
+    public EmployeeDTO getEmployeeById(@PathVariable Long employeeId){
+        return employeeService.getEmployeeById(employeeId);
     }
 
     /* 4.
@@ -46,39 +42,30 @@ public class EmployeeController {
     */
 
     //5. @RequestParam
-//    @GetMapping
-//    public String getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
-//        return " Hi age "+age;
-//    }
+    //    @GetMapping
+    //    public String getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
+    //        return " Hi age "+age;
+    //    }
     // (required = false) has to be mention otherwise work as @PathVariable
     // this method will still run if no age passed along url as its optional @RequestParam
 
-    @GetMapping
-    public List<EmployeeEntity> getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
-        return employeeRepository.findAll();
+    @GetMapping("/getAll")
+    public List<EmployeeDTO> getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
+        return employeeService.getAllEmployee();
     }
 
-    //6. @PostMapping
+    //6. @PostMapping - @RequestBody
     // if the url of a get and post request exactly same and when we run it on browser it
     // automatically runs get url and gives its response
-    @PostMapping
-    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity employee){
-        return employeeRepository.save(employee);
+    @PostMapping("/add")
+    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO employee){
+        return employeeService.createNewEmployee(employee);
     }
 
-
-    //7. @PutMapping
+    //8. @PutMapping
     @PutMapping
     public String updateEmployeeById(){
         return "Hello from Put";
     }
-
-    //8. RequestBody
-    @PostMapping("/new")
-    public EmployeeDTO createNewEmployee1(@RequestBody EmployeeDTO inputEmployee){
-        inputEmployee.setId(100L);
-        return  inputEmployee;
-    }
-
     // left endpoint annotations will be covered in later merges
 }
