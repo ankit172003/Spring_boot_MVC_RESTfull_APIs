@@ -2,8 +2,14 @@ package com.SP.week2.SpringBootWeb.controllers;
 
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
 import com.SP.week2.SpringBootWeb.service.EmployeeService;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 // All learnings :-
 
@@ -27,8 +33,10 @@ public class EmployeeController {
 
     //3. With @PathVariable
     @GetMapping("/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long employeeId){
-        return employeeService.getEmployeeById(employeeId);
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long employeeId){
+        Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(employeeId);
+        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /* 4.
@@ -50,22 +58,37 @@ public class EmployeeController {
     // this method will still run if no age passed along url as its optional @RequestParam
 
     @GetMapping("/getAll")
-    public List<EmployeeDTO> getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
-        return employeeService.getAllEmployee();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployeeDTOS(@RequestParam(required = false) Integer age){
+        return ResponseEntity.ok(employeeService.getAllEmployee());
     }
 
     //6. @PostMapping - @RequestBody
     // if the url of a get and post request exactly same and when we run it on browser it
     // automatically runs get url and gives its response
     @PostMapping("/add")
-    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO employee){
-        return employeeService.createNewEmployee(employee);
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO employee){
+        EmployeeDTO savedEmployee = employeeService.createNewEmployee(employee);
+        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
     //8. @PutMapping
-    @PutMapping
-    public String updateEmployeeById(){
-        return "Hello from Put";
+    @PutMapping("/{employeeId}")
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+        return ResponseEntity.ok(employeeService.updateEmployeeById(employeeId, employeeDTO));
     }
     // left endpoint annotations will be covered in later merges
+
+    @DeleteMapping("/{employeeId}")
+    public ResponseEntity<Boolean> deleteEmployeeById ( @PathVariable Long employeeId){
+       boolean gotDeleted = employeeService.deleteEmployeeById(employeeId);
+        if(gotDeleted) return ResponseEntity.ok(true);
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{employeeId}")
+    public ResponseEntity<EmployeeDTO> updatePartialEmployeeById(@RequestBody Map<String, Object> Updates, @PathVariable Long employeeId){
+        EmployeeDTO employeeDTO = employeeService.updatePartialEmployeeById(Updates,employeeId);
+        if(employeeDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(employeeDTO);
+    }
 }
