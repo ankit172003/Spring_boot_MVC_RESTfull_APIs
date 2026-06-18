@@ -1,6 +1,7 @@
 package com.SP.week2.SpringBootWeb.dto;
 
 
+import com.SP.week2.SpringBootWeb.annotations.AgeIsPrimeNumber;
 import com.SP.week2.SpringBootWeb.annotations.EmployeeRoleValidation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class EmployeeDTO {
     @NotNull(message = "age can't be null")
     @Max(value = 80, message = "age can't be greater than 80")
     @Min(value = 18, message = "age should be greater than 18")
+    @AgeIsPrimeNumber
     private Integer age;
 
     // Learn about regular expression - regexp
