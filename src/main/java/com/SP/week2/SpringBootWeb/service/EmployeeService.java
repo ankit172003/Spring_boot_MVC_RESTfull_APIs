@@ -2,6 +2,7 @@ package com.SP.week2.SpringBootWeb.service;
 
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
 import com.SP.week2.SpringBootWeb.entities.EmployeeEntity;
+import com.SP.week2.SpringBootWeb.exceptions.ResourceNotFoundException;
 import com.SP.week2.SpringBootWeb.repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.util.ReflectionUtils;
@@ -48,20 +49,22 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(Long employeeId, EmployeeDTO employeeDTO){
-            EmployeeEntity enteredEmployee = modelMapper.map(employeeDTO,EmployeeEntity.class);
-            enteredEmployee.setId(employeeId);
-            EmployeeEntity savedEmployee = employeeRepository.save(enteredEmployee);
-            return modelMapper.map(enteredEmployee, EmployeeDTO.class);
+        isExistByEmployeeId(employeeId);
+        EmployeeEntity enteredEmployee = modelMapper.map(employeeDTO,EmployeeEntity.class);
+        enteredEmployee.setId(employeeId);
+        employeeRepository.save(enteredEmployee);
+        return modelMapper.map(enteredEmployee, EmployeeDTO.class);
     }
 
     //Common method used in multiple important method
-    public boolean isExistByEmployeeId(Long employeeId){
-        return employeeRepository.existsById(employeeId);
+    public void isExistByEmployeeId(Long employeeId){
+        boolean exists = employeeRepository.existsById(employeeId);
+        if(!exists) throw new ResourceNotFoundException("Employee not found with id "+ employeeId);
     }
 
 
     public boolean deleteEmployeeById(Long employeeId) {
-        if(!isExistByEmployeeId(employeeId)) return false;
+        isExistByEmployeeId(employeeId);
         employeeRepository.deleteById(employeeId);
         return true;
 
@@ -69,7 +72,7 @@ public class EmployeeService {
 
 // Study topic reflection to understand better
     public EmployeeDTO updatePartialEmployeeById(Map<String, Object> updates, Long employeeId) {
-        if(!isExistByEmployeeId(employeeId)) return null;
+        isExistByEmployeeId(employeeId);
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
         // new concept reflection we will map each available value
         updates.forEach((field,value) -> {
