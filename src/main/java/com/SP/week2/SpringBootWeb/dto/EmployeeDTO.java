@@ -1,6 +1,7 @@
 package com.SP.week2.SpringBootWeb.dto;
 
 
+import com.SP.week2.SpringBootWeb.annotations.EmployeeRoleValidation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,9 @@ public class EmployeeDTO {
 
     // Learn about regular expression - regexp
     @NotNull(message = "role of employee can't be null")
-    @Pattern(regexp ="^(ADMIN|USER)$", message ="role of user can be admin or user only")
+    //@Pattern(regexp ="^(ADMIN|USER)$", message ="role of user can be admin or user only")
+    // custom annotation that does the regexp work only
+    @EmployeeRoleValidation
     private String role;// it should be either ADMIN, USER
 
     @PastOrPresent(message = "field in DOJ should be from past or present not future date")
