@@ -2,6 +2,7 @@ package com.SP.week2.SpringBootWeb.controllers;
 
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
 import com.SP.week2.SpringBootWeb.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +67,7 @@ public class EmployeeController {
     // if the url of a get and post request exactly same and when we run it on browser it
     // automatically runs get url and gives its response
     @PostMapping("/add")
-    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO employee){
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO employee){
         EmployeeDTO savedEmployee = employeeService.createNewEmployee(employee);
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
