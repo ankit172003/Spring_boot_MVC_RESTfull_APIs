@@ -3,6 +3,7 @@ package com.SP.week2.SpringBootWeb.dto;
 
 import com.SP.week2.SpringBootWeb.annotations.AgeIsPrimeNumber;
 import com.SP.week2.SpringBootWeb.annotations.EmployeeRoleValidation;
+import com.SP.week2.SpringBootWeb.annotations.PasswordCheck;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,6 +53,9 @@ public class EmployeeDTO {
 
     @AssertTrue(message = "this should be true")
     private Boolean active;
+
+    @PasswordCheck
+    private String password;
 
 
 }

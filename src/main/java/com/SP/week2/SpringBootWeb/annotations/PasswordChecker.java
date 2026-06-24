@@ -7,7 +7,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class PasswordChecker implements ConstraintValidator<PasswordCheck,String> {
     @Override
     public boolean isValid(String inputValue, ConstraintValidatorContext context) {
-        if(inputValue == null && inputValue.length() <10 ) return false;
+        if(inputValue == null || inputValue.length() < 10 ) return false;
 
         boolean hasUpperCase = false;
         boolean hasLowerCase = false;

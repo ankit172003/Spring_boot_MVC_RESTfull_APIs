@@ -35,5 +35,7 @@ public class EmployeeEntity {
 
     private Boolean active;
 
+    private String password;
+
 
 }

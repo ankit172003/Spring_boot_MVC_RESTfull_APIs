@@ -23,7 +23,7 @@ public class DepartmentDTO {
     private Long id;
 
     @NotBlank(message = "")
-    @Range(min = 3,max = 10,message = "The title character should be in range of 3 and 10")
+    @Range(min = 3,max = 10, message = "The title character should be in range of 3 and 10")
     private String title;
 
     @AssertTrue(message = "should be true")
