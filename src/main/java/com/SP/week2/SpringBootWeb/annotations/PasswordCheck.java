@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = {PasswordChecker.class})
 public @interface PasswordCheck {
 
-    String message() default "Password should Contain a UPPERCASE, lowercase, number, symbol";
+    String message() default "Password should Contain a Uppercase, a lowercase, a number, a symbol and password should be greater than 10 characters";
 
     Class<?>[] groups() default { };
 
