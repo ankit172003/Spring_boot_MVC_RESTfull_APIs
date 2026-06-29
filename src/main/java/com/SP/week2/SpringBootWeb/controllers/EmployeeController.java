@@ -1,5 +1,6 @@
 package com.SP.week2.SpringBootWeb.controllers;
 
+import com.SP.week2.SpringBootWeb.dto.DepartmentDTO;
 import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
 import com.SP.week2.SpringBootWeb.exceptions.ResourceNotFoundException;
 import com.SP.week2.SpringBootWeb.service.EmployeeService;
@@ -90,5 +91,12 @@ public class EmployeeController {
         EmployeeDTO employeeDTO = employeeService.updatePartialEmployeeById(Updates,employeeId);
         if(employeeDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(employeeDTO);
+    }
+
+
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<EmployeeDTO> updatePasswordFromJsonBody(@RequestBody @Valid  Map<String, Object> update, @PathVariable Long id){
+        EmployeeDTO employeeDTO = employeeService.updatePassword(update,id);
+        return  ResponseEntity.ok(employeeDTO);
     }
 }

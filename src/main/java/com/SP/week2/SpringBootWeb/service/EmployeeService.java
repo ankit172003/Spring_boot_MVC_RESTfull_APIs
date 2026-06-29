@@ -4,6 +4,7 @@ import com.SP.week2.SpringBootWeb.dto.EmployeeDTO;
 import com.SP.week2.SpringBootWeb.entities.EmployeeEntity;
 import com.SP.week2.SpringBootWeb.exceptions.ResourceNotFoundException;
 import com.SP.week2.SpringBootWeb.repositories.EmployeeRepository;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
@@ -83,5 +84,20 @@ public class EmployeeService {
             }
           });
         return modelMapper.map(employeeRepository.save(employeeEntity),EmployeeDTO.class);
+    }
+
+    public EmployeeDTO updatePassword(@Valid Map<String, Object> update, Long id) {
+        isExistByEmployeeId(id);
+        EmployeeEntity employeeEntity =  employeeRepository.findById(id).get();
+
+        update.forEach((field,value)-> {
+            Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class,field);
+            if(fieldToBeUpdated != null){
+                fieldToBeUpdated.setAccessible(true);
+                ReflectionUtils.setField(fieldToBeUpdated,employeeEntity,value);
+            }
+        });
+        EmployeeEntity employee = employeeRepository.save(employeeEntity);
+        return modelMapper.map(employee,EmployeeDTO.class);
     }
 }
